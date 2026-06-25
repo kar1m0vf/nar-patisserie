@@ -76,6 +76,8 @@ export function Catalog() {
   const recommendations = useMemo(() => (
     getProductRecommendations(selectedProduct, PRODUCTS)
   ), [selectedProduct]);
+  const favoritePreviewProducts = PRODUCTS.slice(0, 3);
+  const isEmptyFavorites = showFavoritesOnly && favoriteCount === 0;
 
   const handleCategoryChange = nextCategory => {
     setCategory(nextCategory);
@@ -85,6 +87,13 @@ export function Catalog() {
     } else {
       setSearchParams({ category: nextCategory });
     }
+  };
+
+  const resetCatalogView = () => {
+    setShowFavoritesOnly(false);
+    setSearch('');
+    setSort('default');
+    handleCategoryChange('all');
   };
 
   return (
@@ -119,7 +128,14 @@ export function Catalog() {
             <button
               className={`favorite-filter${showFavoritesOnly ? ' active' : ''}`}
               type="button"
-              onClick={() => setShowFavoritesOnly(currentValue => !currentValue)}
+              onClick={() => {
+                if (showFavoritesOnly) {
+                  resetCatalogView();
+                  return;
+                }
+
+                setShowFavoritesOnly(true);
+              }}
             >
               <span>{showFavoritesOnly ? 'All Items' : 'Favorites'}</span>
               <strong>{favoriteCount}</strong>
@@ -160,14 +176,31 @@ export function Catalog() {
           </div>
 
           {products.length === 0 && (
-            <div className="empty-state">
-              <h3>{showFavoritesOnly ? 'No Favorites Yet' : 'No Products Found'}</h3>
-              <p>
-                {showFavoritesOnly
-                  ? 'Mark desserts with the heart icon so you can quickly return to them later.'
-                  : 'Try changing the search query or choosing another category.'}
-              </p>
-            </div>
+            isEmptyFavorites ? (
+              <div className="favorites-empty">
+                <div className="favorites-empty-visual" aria-hidden="true">
+                  {favoritePreviewProducts.map(product => (
+                    <img key={product.id} src={product.image} alt="" />
+                  ))}
+                  <span>&#9825;</span>
+                </div>
+                <p className="eyebrow">Favorites</p>
+                <h3>Your Shortlist Is Empty</h3>
+                <p>Save desserts you want to compare, remember, or order later.</p>
+                <button className="btn btn-primary" type="button" onClick={resetCatalogView}>
+                  Explore Desserts
+                </button>
+              </div>
+            ) : (
+              <div className="empty-state">
+                <h3>{showFavoritesOnly ? 'No Matching Favorites' : 'No Products Found'}</h3>
+                <p>
+                  {showFavoritesOnly
+                    ? 'Try another category or clear the search to see your saved desserts.'
+                    : 'Try changing the search query or choosing another category.'}
+                </p>
+              </div>
+            )
           )}
         </div>
       </section>
