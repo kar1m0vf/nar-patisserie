@@ -17,7 +17,7 @@ export function Home() {
     <main>
       <section className="hero hero-cover">
         <div className="hero-backdrop" aria-hidden="true">
-          <img src={assetPath('images/photos/hero-main.jpg')} alt="" />
+          <img src={assetPath('images/photos/hero-main-alt.jpg')} alt="" />
         </div>
 
         <div className="container hero-cover-inner">
@@ -34,10 +34,10 @@ export function Home() {
           </div>
 
           <div className="hero-stills" aria-hidden="true">
-            <img src={assetPath('images/photos/chocolate-cake.jpg')} alt="" />
-            <img src={assetPath('images/photos/macarons.jpg')} alt="" />
-            <img src={assetPath('images/photos/cherry-cake.jpg')} alt="" />
-            <img src={assetPath('images/photos/cappuccino.jpg')} alt="" />
+            <img src={assetPath('images/photos/hero-still-brownie.jpg')} alt="" />
+            <img src={assetPath('images/photos/hero-still-table.jpg')} alt="" />
+            <img src={assetPath('images/photos/hero-still-latte.jpg')} alt="" />
+            <img src={assetPath('images/photos/hero-still-tart.jpg')} alt="" />
           </div>
         </div>
       </section>
