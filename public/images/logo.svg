@@ -1,0 +1,20 @@
+<svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="softShadow" x="14" y="12" width="68" height="78" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="6" stdDeviation="5" flood-color="#000000" flood-opacity="0.28"/>
+    </filter>
+  </defs>
+  <g filter="url(#softShadow)">
+    <path d="M48 16L53.2 27L65 22.8L60.3 36.2C67.8 41.8 72 50.1 72 59.3C72 74 61.3 84 48 84C34.7 84 24 74 24 59.3C24 50.1 28.2 41.8 35.7 36.2L31 22.8L42.8 27L48 16Z" fill="#E2375B"/>
+    <path d="M48 16L53.2 27L65 22.8L60.3 36.2C56.8 33.4 52.6 32 48 32C43.4 32 39.2 33.4 35.7 36.2L31 22.8L42.8 27L48 16Z" fill="#FF6A85"/>
+    <path d="M31 59C31 48.2 38.5 40 48 40C57.5 40 65 48.2 65 59C65 70.1 57.4 77 48 77C38.6 77 31 70.1 31 59Z" fill="#A91437"/>
+    <path d="M36 58.5C36 50.9 41.2 45 48 45C54.8 45 60 50.9 60 58.5C60 66.2 54.8 71.4 48 71.4C41.2 71.4 36 66.2 36 58.5Z" fill="#C91E45"/>
+    <circle cx="42" cy="54" r="3.1" fill="#FFD18A"/>
+    <circle cx="52" cy="54" r="3.1" fill="#FFD18A"/>
+    <circle cx="47" cy="62" r="3.1" fill="#FFD18A"/>
+    <circle cx="39" cy="64" r="2.7" fill="#F4A94F"/>
+    <circle cx="57" cy="64" r="2.7" fill="#F4A94F"/>
+    <path d="M33 56C34.5 46 40.8 38.5 48 38.5C55.2 38.5 61.5 46 63 56" stroke="#FF91A4" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+    <path d="M40.5 27L48 16L55.5 27" stroke="#FFD18A" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>
