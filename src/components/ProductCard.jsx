@@ -1,10 +1,10 @@
 import { useCart } from '../context/CartContext';
 import { formatPrice } from '../utils/format';
+import { HeartIcon } from './HeartIcon';
 
 export function ProductCard({ product, isFavorite = false, onQuickView, onToggleFavorite }) {
   const { addToCart } = useCart();
   const isInteractive = Boolean(onQuickView);
-  const favoriteIcon = isFavorite ? '\u2665' : '\u2661';
 
   const openQuickView = () => {
     onQuickView?.(product);
@@ -42,7 +42,7 @@ export function ProductCard({ product, isFavorite = false, onQuickView, onToggle
               onToggleFavorite(product.id);
             }}
           >
-            {favoriteIcon}
+            <HeartIcon />
           </button>
         )}
       </div>

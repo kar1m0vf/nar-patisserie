@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useCart } from '../context/CartContext';
 import { formatPrice } from '../utils/format';
+import { HeartIcon } from './HeartIcon';
 
 export function ProductQuickView({
   product,
@@ -12,7 +13,6 @@ export function ProductQuickView({
 }) {
   const { addToCart } = useCart();
   const [quantity, setQuantity] = useState(1);
-  const favoriteIcon = isFavorite ? '\u2665' : '\u2661';
 
   useEffect(() => {
     setQuantity(1);
@@ -76,7 +76,7 @@ export function ProductQuickView({
               aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
               onClick={() => onToggleFavorite(product.id)}
             >
-              {favoriteIcon}
+              <HeartIcon />
             </button>
           </div>
 

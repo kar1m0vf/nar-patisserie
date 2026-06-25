@@ -158,7 +158,6 @@ export function Catalog() {
           <div className="catalog-info">
             <p>
               Showing: {products.length} of {PRODUCTS.length}
-              {favoriteCount > 0 ? ` | favorites: ${favoriteCount}` : ''}
             </p>
             <Link className="text-link" to="/cart">Go to Cart &rarr;</Link>
           </div>
