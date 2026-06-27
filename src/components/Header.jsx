@@ -1,6 +1,5 @@
 import { Link, NavLink } from 'react-router-dom';
 import { useState } from 'react';
-import { useCart } from '../context/CartContext';
 import { assetPath } from '../utils/assets';
 
 const navLinks = [
@@ -10,9 +9,8 @@ const navLinks = [
   { to: '/contacts', label: 'Contacts' }
 ];
 
-export function Header() {
+export function Header({ totalCount = 0 }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { totalCount } = useCart();
 
   const closeMenu = () => setIsMenuOpen(false);
 
@@ -38,14 +36,15 @@ export function Header() {
         <button
           className="menu-toggle"
           type="button"
-          aria-label="Open menu"
+          aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
           aria-expanded={isMenuOpen}
-          onClick={() => setIsMenuOpen(current => !current)}
+          aria-controls="main-menu"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
           &#9776;
         </button>
 
-        <nav className={`nav${isMenuOpen ? ' open' : ''}`} aria-label="Main menu">
+        <nav id="main-menu" className={`nav${isMenuOpen ? ' open' : ''}`} aria-label="Main menu">
           {navLinks.map(link => (
             <NavLink
               key={link.to}

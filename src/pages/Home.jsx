@@ -2,15 +2,8 @@ import { Link } from 'react-router-dom';
 import { ProductCard } from '../components/ProductCard';
 import { PRODUCTS } from '../data/products';
 import { assetPath } from '../utils/assets';
-import { usePageMeta } from '../hooks/usePageMeta';
 
-export function Home() {
-  usePageMeta({
-    page: 'home',
-    title: 'Nar Patisserie',
-    description: 'Nar Patisserie - a patisserie in Baku with fresh cakes, desserts, coffee, pickup, and city delivery.'
-  });
-
+export function Home({ onAddToCart }) {
   const featuredProducts = PRODUCTS.slice(0, 4);
 
   return (
@@ -53,19 +46,19 @@ export function Home() {
           </div>
 
           <div className="category-showcase">
-            <Link className="category-card" to="/catalog?category=cakes">
+            <Link className="category-card" to="/catalog">
               <img src={assetPath('images/photos/chocolate-cake.jpg')} alt="Cake with chocolate cream" />
               <span>Cakes</span>
             </Link>
-            <Link className="category-card" to="/catalog?category=pastry">
+            <Link className="category-card" to="/catalog">
               <img src={assetPath('images/photos/macarons.jpg')} alt="Colorful macarons" />
               <span>Pastries</span>
             </Link>
-            <Link className="category-card" to="/catalog?category=cookies">
+            <Link className="category-card" to="/catalog">
               <img src={assetPath('images/photos/choco-cookies.jpg')} alt="Cookies with chocolate" />
               <span>Cookies</span>
             </Link>
-            <Link className="category-card" to="/catalog?category=drinks">
+            <Link className="category-card" to="/catalog">
               <img src={assetPath('images/photos/cappuccino.jpg')} alt="Cappuccino with milk foam" />
               <span>Drinks</span>
             </Link>
@@ -85,7 +78,11 @@ export function Home() {
 
           <div className="product-grid featured-menu">
             {featuredProducts.map(product => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard
+                key={product.id}
+                product={product}
+                onAddToCart={onAddToCart}
+              />
             ))}
           </div>
         </div>

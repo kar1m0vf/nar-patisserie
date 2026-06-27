@@ -1,37 +1,48 @@
-import { useCart } from '../context/CartContext';
 import { formatPrice } from '../utils/format';
 import { HeartIcon } from './HeartIcon';
 
-export function ProductCard({ product, isFavorite = false, onQuickView, onToggleFavorite }) {
-  const { addToCart } = useCart();
-  const isInteractive = Boolean(onQuickView);
+export function ProductCard({
+  product,
+  isFavorite = false,
+  onQuickView,
+  onToggleFavorite,
+  onAddToCart
+}) {
+  const cardCanOpenModal = Boolean(onQuickView);
 
-  const openQuickView = () => {
-    onQuickView?.(product);
-  };
+  function openQuickView() {
+    if (onQuickView) {
+      onQuickView(product);
+    }
+  }
 
-  const handleCardKeyDown = event => {
-    if (!isInteractive || (event.key !== 'Enter' && event.key !== ' ')) return;
+  function handleCardKeyDown(event) {
+    if (!cardCanOpenModal) {
+      return;
+    }
 
-    event.preventDefault();
-    openQuickView();
-  };
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      openQuickView();
+    }
+  }
 
-  const stopCardClick = event => {
+  function stopCardClick(event) {
     event.stopPropagation();
-  };
+  }
 
   return (
     <article
-      className={`product-card${isInteractive ? ' clickable' : ''}`}
-      role={isInteractive ? 'button' : undefined}
-      tabIndex={isInteractive ? 0 : undefined}
-      onClick={isInteractive ? openQuickView : undefined}
+      className={`product-card${cardCanOpenModal ? ' clickable' : ''}`}
+      role={cardCanOpenModal ? 'button' : undefined}
+      tabIndex={cardCanOpenModal ? 0 : undefined}
+      onClick={cardCanOpenModal ? openQuickView : undefined}
       onKeyDown={handleCardKeyDown}
     >
       <div className="product-image">
         <img src={product.image} alt={product.name} loading="lazy" referrerPolicy="no-referrer" />
         {product.badge && <span className="product-badge">{product.badge}</span>}
+
         {onToggleFavorite && (
           <button
             className={`favorite-btn${isFavorite ? ' active' : ''}`}
@@ -64,7 +75,7 @@ export function ProductCard({ product, isFavorite = false, onQuickView, onToggle
               type="button"
               onClick={event => {
                 stopCardClick(event);
-                addToCart(product.id);
+                onAddToCart(product.id);
               }}
             >
               Add

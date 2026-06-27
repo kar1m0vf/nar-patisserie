@@ -1,32 +1,26 @@
 import { useRef, useState } from 'react';
 import { PageHero } from '../components/PageHero';
-import { usePageMeta } from '../hooks/usePageMeta';
 
 export function Contacts() {
   const formRef = useRef(null);
   const [message, setMessage] = useState({ text: '', type: '' });
 
-  usePageMeta({
-    page: 'contacts',
-    title: 'Nar Patisserie - Contacts',
-    description: 'Nar Patisserie contacts: Baku location, phone number, working hours, delivery, Google map, and feedback form.'
-  });
-
-  const handleFeedbackSubmit = event => {
+  function handleFeedbackSubmit(event) {
     event.preventDefault();
 
     if (!event.currentTarget.checkValidity()) {
+      event.currentTarget.reportValidity();
       setMessage({ text: 'Please check the form fields.', type: 'error' });
       return;
     }
 
     setMessage({ text: 'Message sent. Thank you for your feedback!', type: 'success' });
     formRef.current?.reset();
-  };
+  }
 
   return (
     <main>
-      <PageHero eyebrow="Contacts" title="Address, Hours, and Feedback">
+      <PageHero eyebrow="Contacts" title="Address, Hours, and Feedback" image="cappuccino">
         We are available every day: we can confirm dessert availability, help with an order, and suggest the most convenient pickup or delivery option.
       </PageHero>
 

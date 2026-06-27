@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useCart } from '../context/CartContext';
 import { formatPrice } from '../utils/format';
 import { HeartIcon } from './HeartIcon';
 
@@ -9,9 +8,9 @@ export function ProductQuickView({
   isFavorite,
   onClose,
   onSelectProduct,
-  onToggleFavorite
+  onToggleFavorite,
+  onAddToCart
 }) {
-  const { addToCart } = useCart();
   const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
@@ -19,13 +18,16 @@ export function ProductQuickView({
   }, [product?.id]);
 
   useEffect(() => {
-    if (!product) return undefined;
+    if (!product) {
+      return undefined;
+    }
 
-    const handleKeyDown = event => {
+    function handleKeyDown(event) {
       if (event.key === 'Escape') {
         onClose();
       }
-    };
+    }
+
     const previousOverflow = document.body.style.overflow;
 
     document.body.style.overflow = 'hidden';
@@ -37,20 +39,27 @@ export function ProductQuickView({
     };
   }, [product, onClose]);
 
-  if (!product) return null;
+  if (!product) {
+    return null;
+  }
 
-  const decreaseQuantity = () => setQuantity(currentQuantity => Math.max(1, currentQuantity - 1));
-  const increaseQuantity = () => setQuantity(currentQuantity => Math.min(12, currentQuantity + 1));
+  function decreaseQuantity() {
+    setQuantity(currentQuantity => Math.max(1, currentQuantity - 1));
+  }
 
-  const handleBackdropClick = event => {
+  function increaseQuantity() {
+    setQuantity(currentQuantity => Math.min(12, currentQuantity + 1));
+  }
+
+  function handleBackdropClick(event) {
     if (event.target === event.currentTarget) {
       onClose();
     }
-  };
+  }
 
-  const handleAddToCart = () => {
-    addToCart(product.id, quantity);
-  };
+  function handleAddToCart() {
+    onAddToCart(product.id, quantity);
+  }
 
   return (
     <div className="quick-view-backdrop" role="presentation" onMouseDown={handleBackdropClick}>
@@ -70,6 +79,7 @@ export function ProductQuickView({
               <span className="product-category">{product.categoryName}</span>
               <h2 id="quick-view-title">{product.name}</h2>
             </div>
+
             <button
               className={`favorite-btn quick-favorite${isFavorite ? ' active' : ''}`}
               type="button"
@@ -87,12 +97,14 @@ export function ProductQuickView({
               <span>Price</span>
               <strong>{formatPrice(product.price)}</strong>
             </div>
+
             {product.weight && (
               <div>
                 <span>Format</span>
                 <strong>{product.weight}</strong>
               </div>
             )}
+
             <div>
               <span>Category</span>
               <strong>{product.categoryName}</strong>
@@ -120,6 +132,7 @@ export function ProductQuickView({
               <strong>{quantity}</strong>
               <button type="button" onClick={increaseQuantity}>+</button>
             </div>
+
             <button className="btn btn-primary" type="button" onClick={handleAddToCart}>
               Add {formatPrice(product.price * quantity)}
             </button>

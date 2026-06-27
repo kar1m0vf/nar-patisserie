@@ -1,29 +1,20 @@
 import { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { PageHero } from '../components/PageHero';
-import { useCart } from '../context/CartContext';
-import { usePageMeta } from '../hooks/usePageMeta';
 import { formatPrice } from '../utils/format';
 
-export function Cart() {
+export function Cart({
+  detailedCart,
+  totalCount,
+  totalPrice,
+  onChangeQuantity,
+  onRemove,
+  onClear
+}) {
   const formRef = useRef(null);
   const [message, setMessage] = useState({ text: '', type: '' });
-  const {
-    detailedCart,
-    totalCount,
-    totalPrice,
-    changeCartQuantity,
-    removeFromCart,
-    clearCart
-  } = useCart();
 
-  usePageMeta({
-    page: 'cart',
-    title: 'Nar Patisserie - Shopping Cart',
-    description: 'Nar Patisserie shopping cart: review selected desserts, enter contact details, and add a delivery address.'
-  });
-
-  const handleOrderSubmit = event => {
+  function handleOrderSubmit(event) {
     event.preventDefault();
 
     if (detailedCart.length === 0) {
@@ -32,23 +23,25 @@ export function Cart() {
     }
 
     if (!event.currentTarget.checkValidity()) {
+      event.currentTarget.reportValidity();
       setMessage({ text: 'Please fill in the required fields correctly.', type: 'error' });
       return;
     }
 
     const orderNumber = Math.floor(1000 + Math.random() * 9000);
+
     setMessage({
       text: `Order #${orderNumber} has been placed. A manager will contact you to confirm it.`,
       type: 'success'
     });
 
     formRef.current?.reset();
-    clearCart();
-  };
+    onClear();
+  }
 
   return (
     <main>
-      <PageHero eyebrow="Checkout" title="Shopping Cart">
+      <PageHero eyebrow="Checkout" title="Shopping Cart" image="chocolate-cake">
         Review the selected items, change quantities, and leave your details for order confirmation. After you send the request, we will contact you.
       </PageHero>
 
@@ -57,7 +50,7 @@ export function Cart() {
           <div className="cart-panel">
             <div className="panel-header">
               <h2>Selected Items</h2>
-              <button className="text-button" type="button" onClick={clearCart}>Clear Cart</button>
+              <button className="text-button" type="button" onClick={onClear}>Clear Cart</button>
             </div>
 
             <div className="cart-items">
@@ -75,16 +68,16 @@ export function Cart() {
                   </div>
 
                   <div className="quantity-control" aria-label="Quantity">
-                    <button type="button" onClick={() => changeCartQuantity(item.product.id, 'decrease')}>&minus;</button>
+                    <button type="button" onClick={() => onChangeQuantity(item.product.id, 'decrease')}>&minus;</button>
                     <strong>{item.quantity}</strong>
-                    <button type="button" onClick={() => changeCartQuantity(item.product.id, 'increase')}>+</button>
+                    <button type="button" onClick={() => onChangeQuantity(item.product.id, 'increase')}>+</button>
                   </div>
 
                   <strong className="cart-item-total">
                     {formatPrice(item.product.price * item.quantity)}
                   </strong>
 
-                  <button className="remove-btn" type="button" onClick={() => removeFromCart(item.product.id)}>
+                  <button className="remove-btn" type="button" onClick={() => onRemove(item.product.id)}>
                     Remove
                   </button>
                 </article>

@@ -1,104 +1,113 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { PageHero } from '../components/PageHero';
 import { ProductCard } from '../components/ProductCard';
 import { ProductQuickView } from '../components/ProductQuickView';
 import { CATEGORIES, PRODUCTS } from '../data/products';
-import { useFavorites } from '../hooks/useFavorites';
-import { usePageMeta } from '../hooks/usePageMeta';
-import { getProductRecommendations } from '../utils/recommendations';
 
-const allowedCategories = new Set(CATEGORIES.map(category => category.id));
+const FAVORITES_KEY = 'narPatisserieFavorites';
 
-function getInitialCategory(searchParams) {
-  const category = searchParams.get('category');
-  return allowedCategories.has(category) ? category : 'all';
+function readFavoritesFromStorage() {
+  try {
+    const savedFavorites = localStorage.getItem(FAVORITES_KEY);
+    const parsedFavorites = savedFavorites ? JSON.parse(savedFavorites) : [];
+
+    if (!Array.isArray(parsedFavorites)) {
+      return [];
+    }
+
+    return parsedFavorites
+      .map(Number)
+      .filter(Number.isFinite);
+  } catch {
+    return [];
+  }
 }
 
-export function Catalog() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [category, setCategory] = useState(() => getInitialCategory(searchParams));
+export function Catalog({ onAddToCart }) {
+  const [category, setCategory] = useState('all');
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState('default');
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const { favoritesSet, favoriteCount, toggleFavorite } = useFavorites();
+  const [favorites, setFavorites] = useState(readFavoritesFromStorage);
 
   useEffect(() => {
-    setCategory(getInitialCategory(searchParams));
-  }, [searchParams]);
+    localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
+  }, [favorites]);
 
-  usePageMeta({
-    page: 'catalog',
-    title: 'Nar Patisserie - Dessert Catalog',
-    description: 'Nar Patisserie catalog: cakes, pastries, cookies, coffee, and drinks with search, filters, favorites, and cart.'
-  });
+  function toggleFavorite(productId) {
+    const id = Number(productId);
 
-  const products = useMemo(() => {
-    let result = [...PRODUCTS];
-
-    if (category !== 'all') {
-      result = result.filter(product => product.category === category);
+    if (favorites.includes(id)) {
+      setFavorites(favorites.filter(favoriteId => favoriteId !== id));
+    } else {
+      setFavorites([...favorites, id]);
     }
+  }
 
-    if (showFavoritesOnly) {
-      result = result.filter(product => favoritesSet.has(product.id));
-    }
+  function resetCatalogView() {
+    setCategory('all');
+    setSearch('');
+    setSort('default');
+    setShowFavoritesOnly(false);
+  }
 
-    if (search.trim()) {
-      const query = search.trim().toLowerCase();
-      result = result.filter(product => (
-        [
-          product.name,
-          product.description,
-          product.categoryName,
-          product.taste,
-          product.ingredients?.join(' ')
-        ].some(value => value?.toLowerCase().includes(query))
-      ));
-    }
+  let products = [...PRODUCTS];
 
-    if (sort === 'price-asc') {
-      result.sort((a, b) => a.price - b.price);
-    }
+  if (category !== 'all') {
+    products = products.filter(product => product.category === category);
+  }
 
-    if (sort === 'price-desc') {
-      result.sort((a, b) => b.price - a.price);
-    }
+  if (showFavoritesOnly) {
+    products = products.filter(product => favorites.includes(product.id));
+  }
 
-    if (sort === 'name-asc') {
-      result.sort((a, b) => a.name.localeCompare(b.name, 'en'));
-    }
+  if (search.trim()) {
+    const query = search.trim().toLowerCase();
 
-    return result;
-  }, [category, favoritesSet, search, showFavoritesOnly, sort]);
+    products = products.filter(product => {
+      const searchableText = [
+        product.name,
+        product.description,
+        product.categoryName,
+        product.taste,
+        product.ingredients?.join(' ')
+      ].join(' ').toLowerCase();
 
-  const recommendations = useMemo(() => (
-    getProductRecommendations(selectedProduct, PRODUCTS)
-  ), [selectedProduct]);
+      return searchableText.includes(query);
+    });
+  }
+
+  if (sort === 'price-asc') {
+    products.sort((a, b) => a.price - b.price);
+  }
+
+  if (sort === 'price-desc') {
+    products.sort((a, b) => b.price - a.price);
+  }
+
+  if (sort === 'name-asc') {
+    products.sort((a, b) => a.name.localeCompare(b.name, 'en'));
+  }
+
+  const recommendations = selectedProduct
+    ? PRODUCTS
+      .filter(product => product.category === selectedProduct.category && product.id !== selectedProduct.id)
+      .slice(0, 3)
+    : [];
+
+  const favoriteCount = favorites.length;
   const favoritePreviewProducts = PRODUCTS.slice(0, 3);
   const isEmptyFavorites = showFavoritesOnly && favoriteCount === 0;
 
-  const handleCategoryChange = nextCategory => {
-    setCategory(nextCategory);
-
-    if (nextCategory === 'all') {
-      setSearchParams({});
-    } else {
-      setSearchParams({ category: nextCategory });
-    }
-  };
-
-  const resetCatalogView = () => {
-    setShowFavoritesOnly(false);
-    setSearch('');
-    setSort('default');
-    handleCategoryChange('all');
-  };
-
   return (
     <main>
-      <PageHero eyebrow="Nar Patisserie Showcase" title="Desserts, Bakes, and Drinks">
+      <PageHero
+        eyebrow="Nar Patisserie Showcase"
+        title="Desserts, Bakes, and Drinks"
+        image="macarons"
+      >
         Choose a category, find an item through search, and add it to the cart. The menu includes cakes, pastries, cookies, coffee, and refreshing drinks.
       </PageHero>
 
@@ -128,14 +137,7 @@ export function Catalog() {
             <button
               className={`favorite-filter${showFavoritesOnly ? ' active' : ''}`}
               type="button"
-              onClick={() => {
-                if (showFavoritesOnly) {
-                  resetCatalogView();
-                  return;
-                }
-
-                setShowFavoritesOnly(true);
-              }}
+              onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
             >
               <span>{showFavoritesOnly ? 'All Items' : 'Favorites'}</span>
               <strong>{favoriteCount}</strong>
@@ -148,7 +150,7 @@ export function Catalog() {
                 key={item.id}
                 className={`tab-btn${category === item.id ? ' active' : ''}`}
                 type="button"
-                onClick={() => handleCategoryChange(item.id)}
+                onClick={() => setCategory(item.id)}
               >
                 {item.label}
               </button>
@@ -167,9 +169,10 @@ export function Catalog() {
               <ProductCard
                 key={product.id}
                 product={product}
-                isFavorite={favoritesSet.has(product.id)}
+                isFavorite={favorites.includes(product.id)}
                 onQuickView={setSelectedProduct}
                 onToggleFavorite={toggleFavorite}
+                onAddToCart={onAddToCart}
               />
             ))}
           </div>
@@ -207,10 +210,11 @@ export function Catalog() {
       <ProductQuickView
         product={selectedProduct}
         recommendations={recommendations}
-        isFavorite={selectedProduct ? favoritesSet.has(selectedProduct.id) : false}
+        isFavorite={selectedProduct ? favorites.includes(selectedProduct.id) : false}
         onClose={() => setSelectedProduct(null)}
         onSelectProduct={setSelectedProduct}
         onToggleFavorite={toggleFavorite}
+        onAddToCart={onAddToCart}
       />
     </main>
   );
