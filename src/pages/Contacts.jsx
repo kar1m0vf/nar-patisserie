@@ -1,21 +1,13 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { PageHero } from '../components/PageHero';
 
 export function Contacts() {
-  const formRef = useRef(null);
   const [message, setMessage] = useState({ text: '', type: '' });
 
   function handleFeedbackSubmit(event) {
     event.preventDefault();
-
-    if (!event.currentTarget.checkValidity()) {
-      event.currentTarget.reportValidity();
-      setMessage({ text: 'Please check the form fields.', type: 'error' });
-      return;
-    }
-
     setMessage({ text: 'Message sent. Thank you for your feedback!', type: 'success' });
-    formRef.current?.reset();
+    event.currentTarget.reset();
   }
 
   return (
@@ -50,7 +42,7 @@ export function Contacts() {
               <h2>Message Us</h2>
               <p className="contact-window-text">Leave a message if you want to ask about dessert ingredients, item availability, delivery terms, or an order for a specific time.</p>
 
-              <form className="feedback-form" ref={formRef} onSubmit={handleFeedbackSubmit} noValidate>
+              <form className="feedback-form" onSubmit={handleFeedbackSubmit}>
                 <label>
                   <span>Name</span>
                   <input type="text" name="name" placeholder="Enter your name" required minLength="2" />

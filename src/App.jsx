@@ -73,7 +73,7 @@ export function App() {
       return [...currentCart, { id, quantity: amount }];
     });
 
-    setToastText(amount > 1 ? `Added to cart: ${amount} pcs.` : 'Added to cart');
+    setToastText('Added to cart');
   }
 
   function changeCartQuantity(productId, action) {

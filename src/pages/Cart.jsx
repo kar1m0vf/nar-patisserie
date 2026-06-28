@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { PageHero } from '../components/PageHero';
 import { formatPrice } from '../utils/format';
@@ -11,7 +11,6 @@ export function Cart({
   onRemove,
   onClear
 }) {
-  const formRef = useRef(null);
   const [message, setMessage] = useState({ text: '', type: '' });
 
   function handleOrderSubmit(event) {
@@ -22,12 +21,6 @@ export function Cart({
       return;
     }
 
-    if (!event.currentTarget.checkValidity()) {
-      event.currentTarget.reportValidity();
-      setMessage({ text: 'Please fill in the required fields correctly.', type: 'error' });
-      return;
-    }
-
     const orderNumber = Math.floor(1000 + Math.random() * 9000);
 
     setMessage({
@@ -35,7 +28,7 @@ export function Cart({
       type: 'success'
     });
 
-    formRef.current?.reset();
+    event.currentTarget.reset();
     onClear();
   }
 
@@ -102,7 +95,7 @@ export function Cart({
               <div><span>Total</span><strong>{formatPrice(totalPrice)}</strong></div>
             </div>
 
-            <form className="order-form" ref={formRef} onSubmit={handleOrderSubmit} noValidate>
+            <form className="order-form" onSubmit={handleOrderSubmit}>
               <label>
                 <span>Name</span>
                 <input type="text" name="name" placeholder="Your name" required minLength="2" />
