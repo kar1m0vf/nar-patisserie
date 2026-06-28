@@ -6,7 +6,6 @@ import { ProductCard } from '../components/ProductCard';
 import { PRODUCTS } from '../data/products';
 import { useFavorites } from '../hooks/useFavorites';
 import { formatPrice } from '../utils/format';
-import { getProductRecommendations } from '../utils/recommendations';
 
 export function ProductDetails({ onAddToCart }) {
   const { id } = useParams();
@@ -14,7 +13,7 @@ export function ProductDetails({ onAddToCart }) {
   const product = PRODUCTS.find(item => item.id === productId);
   const [quantity, setQuantity] = useState(1);
   const {
-    favoritesSet,
+    favoriteIds,
     toggleFavorite
   } = useFavorites();
 
@@ -42,8 +41,10 @@ export function ProductDetails({ onAddToCart }) {
     );
   }
 
-  const recommendations = getProductRecommendations(product, PRODUCTS);
-  const isFavorite = favoritesSet.has(product.id);
+  const recommendations = product.recommendationIds
+    .map(recommendationId => PRODUCTS.find(item => item.id === recommendationId))
+    .filter(Boolean);
+  const isFavorite = favoriteIds.includes(product.id);
   const totalPrice = product.price * quantity;
 
   function decreaseQuantity() {
@@ -64,7 +65,11 @@ export function ProductDetails({ onAddToCart }) {
           </div>
 
           <article className="product-detail-panel">
-            <Link className="text-link product-back-link" to="/catalog">Back to Catalog</Link>
+            <nav className="product-breadcrumb" aria-label="Breadcrumb">
+              <Link to="/catalog">Catalog</Link>
+              <span>/</span>
+              <span>{product.name}</span>
+            </nav>
 
             <div className="product-detail-heading">
               <div>
@@ -116,16 +121,23 @@ export function ProductDetails({ onAddToCart }) {
               </div>
             </div>
 
-            <div className="product-detail-order">
-              <div className="quantity-control" aria-label="Quantity">
-                <button type="button" onClick={decreaseQuantity}>&minus;</button>
-                <strong>{quantity}</strong>
-                <button type="button" onClick={increaseQuantity}>+</button>
+            <div className="product-purchase-panel">
+              <div className="product-price-total">
+                <span>Total</span>
+                <strong>{formatPrice(totalPrice)}</strong>
               </div>
 
-              <button className="btn btn-primary" type="button" onClick={() => onAddToCart(product.id, quantity)}>
-                Add {formatPrice(totalPrice)}
-              </button>
+              <div className="product-detail-order">
+                <div className="quantity-control" aria-label="Quantity">
+                  <button type="button" aria-label="Decrease quantity" onClick={decreaseQuantity}>&minus;</button>
+                  <strong>{quantity}</strong>
+                  <button type="button" aria-label="Increase quantity" onClick={increaseQuantity}>+</button>
+                </div>
+
+                <button className="btn btn-primary" type="button" onClick={() => onAddToCart(product.id, quantity)}>
+                  Add to Cart
+                </button>
+              </div>
             </div>
           </article>
         </div>
@@ -147,7 +159,7 @@ export function ProductDetails({ onAddToCart }) {
                 <ProductCard
                   key={item.id}
                   product={item}
-                  isFavorite={favoritesSet.has(item.id)}
+                  isFavorite={favoriteIds.includes(item.id)}
                   onToggleFavorite={toggleFavorite}
                   onAddToCart={onAddToCart}
                 />

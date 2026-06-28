@@ -12,7 +12,6 @@ export function Catalog({ onAddToCart }) {
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const {
     favoriteIds,
-    favoritesSet,
     favoriteCount,
     toggleFavorite
   } = useFavorites();
@@ -31,23 +30,13 @@ export function Catalog({ onAddToCart }) {
   }
 
   if (showFavoritesOnly) {
-    products = products.filter(product => favoritesSet.has(product.id));
+    products = products.filter(product => favoriteIds.includes(product.id));
   }
 
   if (search.trim()) {
     const query = search.trim().toLowerCase();
 
-    products = products.filter(product => {
-      const searchableText = [
-        product.name,
-        product.description,
-        product.categoryName,
-        product.taste,
-        product.ingredients?.join(' ')
-      ].join(' ').toLowerCase();
-
-      return searchableText.includes(query);
-    });
+    products = products.filter(product => product.name.toLowerCase().includes(query));
   }
 
   if (sort === 'price-asc') {
@@ -133,7 +122,7 @@ export function Catalog({ onAddToCart }) {
               <ProductCard
                 key={product.id}
                 product={product}
-                isFavorite={favoritesSet.has(product.id)}
+                isFavorite={favoriteIds.includes(product.id)}
                 onToggleFavorite={toggleFavorite}
                 onAddToCart={onAddToCart}
               />

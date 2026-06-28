@@ -6,46 +6,19 @@ export function ScrollTop() {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    if (!('scrollRestoration' in window.history)) {
-      return undefined;
+    function toggleVisibility() {
+      setIsVisible(window.scrollY > 420);
     }
 
-    const previousScrollRestoration = window.history.scrollRestoration;
-    window.history.scrollRestoration = 'manual';
-
-    return () => {
-      window.history.scrollRestoration = previousScrollRestoration;
-    };
-  }, []);
-
-  useEffect(() => {
-    const toggleVisibility = () => {
-      setIsVisible(window.scrollY > Math.min(420, window.innerHeight * 0.7));
-    };
-
     toggleVisibility();
-    window.addEventListener('scroll', toggleVisibility, { passive: true });
+    window.addEventListener('scroll', toggleVisibility);
 
     return () => window.removeEventListener('scroll', toggleVisibility);
   }, []);
 
   useEffect(() => {
     setIsVisible(false);
-    const scrollToTop = () => {
-      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-    };
-
-    scrollToTop();
-
-    const frameId = window.requestAnimationFrame(scrollToTop);
-    const timeoutId = window.setTimeout(scrollToTop, 60);
-    const lateTimeoutId = window.setTimeout(scrollToTop, 250);
-
-    return () => {
-      window.cancelAnimationFrame(frameId);
-      window.clearTimeout(timeoutId);
-      window.clearTimeout(lateTimeoutId);
-    };
+    window.scrollTo(0, 0);
   }, [pathname]);
 
   const handleClick = () => {

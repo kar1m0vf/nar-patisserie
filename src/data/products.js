@@ -33,29 +33,6 @@ const CATEGORY_DETAILS = {
   }
 };
 
-const PRODUCT_RECOMMENDATIONS = {
-  1: [10, 4, 5],
-  2: [19, 15, 12],
-  3: [11, 8, 10],
-  4: [10, 5, 7],
-  5: [19, 4, 12],
-  6: [10, 18, 11],
-  7: [10, 11, 4],
-  8: [11, 19, 18],
-  9: [10, 12, 7],
-  10: [4, 7, 1],
-  11: [8, 18, 3],
-  12: [5, 2, 9],
-  13: [12, 5, 10],
-  14: [10, 9, 11],
-  15: [12, 19, 5],
-  16: [10, 8, 11],
-  17: [19, 12, 10],
-  18: [11, 10, 8],
-  19: [5, 17, 2],
-  20: [15, 5, 7]
-};
-
 const RAW_PRODUCTS = [
   {
     id: 1,
@@ -66,6 +43,7 @@ const RAW_PRODUCTS = [
     image: imageUrl('chocolate-cake'),
     badge: 'Bestseller',
     weight: '1 kg',
+    recommendationIds: [10, 4, 5],
     description: 'Tender sponge cake, chocolate cream, and a light berry finish.'
   },
   {
@@ -77,6 +55,7 @@ const RAW_PRODUCTS = [
     image: imageUrl('strawberry-cheesecake'),
     badge: 'Fresh',
     weight: '900 g',
+    recommendationIds: [19, 15, 12],
     description: 'Creamy base, strawberry layer, and a buttery biscuit crumb.'
   },
   {
@@ -88,6 +67,7 @@ const RAW_PRODUCTS = [
     image: imageUrl('honey-cake'),
     badge: 'Homemade',
     weight: '1 kg',
+    recommendationIds: [11, 8, 10],
     description: 'Honey cake layers, soft sour cream filling, and caramel notes.'
   },
   {
@@ -99,6 +79,7 @@ const RAW_PRODUCTS = [
     image: imageUrl('vanilla-eclair'),
     badge: 'New',
     weight: '1 pc.',
+    recommendationIds: [10, 5, 7],
     description: 'Choux pastry, vanilla cream, and a delicate glaze.'
   },
   {
@@ -110,6 +91,7 @@ const RAW_PRODUCTS = [
     image: imageUrl('macarons'),
     badge: 'Assorted',
     weight: '6 pcs.',
+    recommendationIds: [19, 4, 12],
     description: 'A set of six macarons with different creamy fillings.'
   },
   {
@@ -121,6 +103,7 @@ const RAW_PRODUCTS = [
     image: imageUrl('tiramisu'),
     badge: 'Italian',
     weight: '180 g',
+    recommendationIds: [10, 18, 11],
     description: 'Mascarpone cream, coffee, cocoa, and an airy texture.'
   },
   {
@@ -132,6 +115,7 @@ const RAW_PRODUCTS = [
     image: imageUrl('oat-cookies'),
     badge: 'For Tea',
     weight: '200 g',
+    recommendationIds: [10, 11, 4],
     description: 'Homemade cookies with oat flakes and chocolate drops.'
   },
   {
@@ -143,6 +127,7 @@ const RAW_PRODUCTS = [
     image: imageUrl('choco-cookies'),
     badge: 'Warm',
     weight: '200 g',
+    recommendationIds: [11, 19, 18],
     description: 'Crisp cookies with pieces of dark chocolate.'
   },
   {
@@ -154,6 +139,7 @@ const RAW_PRODUCTS = [
     image: imageUrl('gingerbread'),
     badge: 'Spiced',
     weight: '180 g',
+    recommendationIds: [10, 12, 7],
     description: 'Aromatic gingerbread with cinnamon, ginger, and sugar glaze.'
   },
   {
@@ -165,6 +151,7 @@ const RAW_PRODUCTS = [
     image: imageUrl('cappuccino'),
     badge: 'Barista',
     weight: '250 ml',
+    recommendationIds: [4, 7, 1],
     description: 'Coffee with milk foam, made to pair well with desserts.'
   },
   {
@@ -176,6 +163,7 @@ const RAW_PRODUCTS = [
     image: imageUrl('hot-chocolate'),
     badge: 'Cocoa',
     weight: '250 ml',
+    recommendationIds: [8, 18, 3],
     description: 'Thick chocolate drink with a smooth creamy taste.'
   },
   {
@@ -187,6 +175,7 @@ const RAW_PRODUCTS = [
     image: imageUrl('berry-lemonade'),
     badge: 'Iced',
     weight: '300 ml',
+    recommendationIds: [5, 2, 9],
     description: 'Refreshing lemonade with berries, citrus, and mint.'
   },
   {
@@ -198,6 +187,7 @@ const RAW_PRODUCTS = [
     image: imageUrl('cherry-cake'),
     badge: 'Berries',
     weight: '900 g',
+    recommendationIds: [12, 5, 10],
     description: 'Tender cake layers, cream filling, and a lightly tart cherry layer.'
   },
   {
@@ -209,6 +199,7 @@ const RAW_PRODUCTS = [
     image: imageUrl('carrot-cake'),
     badge: 'With Nuts',
     weight: '850 g',
+    recommendationIds: [10, 9, 11],
     description: 'Spiced sponge, cream cheese frosting, walnuts, and soft caramel flavor.'
   },
   {
@@ -220,6 +211,7 @@ const RAW_PRODUCTS = [
     image: imageUrl('vanilla-cupcakes'),
     badge: 'Set',
     weight: '4 pcs.',
+    recommendationIds: [12, 19, 5],
     description: 'Mini cupcakes with vanilla cream and a neat festive finish.'
   },
   {
@@ -231,6 +223,7 @@ const RAW_PRODUCTS = [
     image: imageUrl('caramel-cupcake'),
     badge: 'Caramel',
     weight: '1 pc.',
+    recommendationIds: [10, 8, 11],
     description: 'Soft cupcake with caramel filling and a creamy frosting cap.'
   },
   {
@@ -242,6 +235,7 @@ const RAW_PRODUCTS = [
     image: imageUrl('donuts'),
     badge: 'Assorted',
     weight: '3 pcs.',
+    recommendationIds: [19, 12, 10],
     description: 'Airy donuts with different glazes for coffee, tea, or a sweet set.'
   },
   {
@@ -253,6 +247,7 @@ const RAW_PRODUCTS = [
     image: imageUrl('brownie'),
     badge: 'Cocoa',
     weight: '160 g',
+    recommendationIds: [11, 10, 8],
     description: 'Dense chocolate dessert with deep cocoa flavor and a soft center.'
   },
   {
@@ -264,6 +259,7 @@ const RAW_PRODUCTS = [
     image: imageUrl('iced-latte'),
     badge: 'Cold',
     weight: '300 ml',
+    recommendationIds: [5, 17, 2],
     description: 'Chilled coffee with milk and ice for a warm day.'
   },
   {
@@ -275,12 +271,12 @@ const RAW_PRODUCTS = [
     image: imageUrl('matcha-latte'),
     badge: 'Matcha',
     weight: '250 ml',
+    recommendationIds: [15, 5, 7],
     description: 'Soft green matcha tea with milk and a delicate creamy texture.'
   }
 ];
 
 export const PRODUCTS = RAW_PRODUCTS.map(product => ({
   ...CATEGORY_DETAILS[product.category],
-  ...product,
-  recommendationIds: PRODUCT_RECOMMENDATIONS[product.id] || []
+  ...product
 }));

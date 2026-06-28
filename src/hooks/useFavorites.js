@@ -1,17 +1,11 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const FAVORITES_KEY = 'narPatisserieFavorites';
 
 function readFavoriteIds() {
   try {
     const savedFavorites = localStorage.getItem(FAVORITES_KEY);
-    const parsedFavorites = savedFavorites ? JSON.parse(savedFavorites) : [];
-
-    if (!Array.isArray(parsedFavorites)) return [];
-
-    return parsedFavorites
-      .map(Number)
-      .filter(Number.isFinite);
+    return savedFavorites ? JSON.parse(savedFavorites) : [];
   } catch {
     return [];
   }
@@ -24,22 +18,16 @@ export function useFavorites() {
     localStorage.setItem(FAVORITES_KEY, JSON.stringify(favoriteIds));
   }, [favoriteIds]);
 
-  const favoritesSet = useMemo(() => new Set(favoriteIds), [favoriteIds]);
-
-  const toggleFavorite = useCallback(productId => {
-    const id = Number(productId);
-    if (!Number.isFinite(id)) return;
-
-    setFavoriteIds(currentIds => (
-      currentIds.includes(id)
-        ? currentIds.filter(currentId => currentId !== id)
-        : [...currentIds, id]
-    ));
-  }, []);
+  function toggleFavorite(productId) {
+    if (favoriteIds.includes(productId)) {
+      setFavoriteIds(favoriteIds.filter(id => id !== productId));
+    } else {
+      setFavoriteIds([...favoriteIds, productId]);
+    }
+  }
 
   return {
     favoriteIds,
-    favoritesSet,
     favoriteCount: favoriteIds.length,
     toggleFavorite
   };
