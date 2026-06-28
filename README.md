@@ -6,13 +6,14 @@ Simple frontend project for a patisserie website.
 
 - Home
 - Catalog
+- Product details
 - Cart
 - Contacts
 
 ## Features
 
 - Product catalog with categories, search, and sorting
-- Product quick view modal
+- Product detail page with recommendations
 - Favorites saved in localStorage
 - Cart saved in localStorage
 - Responsive layout for desktop and mobile

@@ -7,6 +7,7 @@ import { Home } from './pages/Home';
 import { Catalog } from './pages/Catalog';
 import { Cart } from './pages/Cart';
 import { Contacts } from './pages/Contacts';
+import { ProductDetails } from './pages/ProductDetails';
 import { PRODUCTS } from './data/products';
 
 const CART_KEY = 'narPatisserieCart';
@@ -124,6 +125,7 @@ export function App() {
       <Routes>
         <Route path="/" element={<Home onAddToCart={addToCart} />} />
         <Route path="/catalog" element={<Catalog onAddToCart={addToCart} />} />
+        <Route path="/product/:id" element={<ProductDetails onAddToCart={addToCart} />} />
         <Route
           path="/cart"
           element={(

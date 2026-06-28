@@ -1,50 +1,21 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { PageHero } from '../components/PageHero';
 import { ProductCard } from '../components/ProductCard';
-import { ProductQuickView } from '../components/ProductQuickView';
 import { CATEGORIES, PRODUCTS } from '../data/products';
-
-const FAVORITES_KEY = 'narPatisserieFavorites';
-
-function readFavoritesFromStorage() {
-  try {
-    const savedFavorites = localStorage.getItem(FAVORITES_KEY);
-    const parsedFavorites = savedFavorites ? JSON.parse(savedFavorites) : [];
-
-    if (!Array.isArray(parsedFavorites)) {
-      return [];
-    }
-
-    return parsedFavorites
-      .map(Number)
-      .filter(Number.isFinite);
-  } catch {
-    return [];
-  }
-}
+import { useFavorites } from '../hooks/useFavorites';
 
 export function Catalog({ onAddToCart }) {
   const [category, setCategory] = useState('all');
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState('default');
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState(null);
-  const [favorites, setFavorites] = useState(readFavoritesFromStorage);
-
-  useEffect(() => {
-    localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
-  }, [favorites]);
-
-  function toggleFavorite(productId) {
-    const id = Number(productId);
-
-    if (favorites.includes(id)) {
-      setFavorites(favorites.filter(favoriteId => favoriteId !== id));
-    } else {
-      setFavorites([...favorites, id]);
-    }
-  }
+  const {
+    favoriteIds,
+    favoritesSet,
+    favoriteCount,
+    toggleFavorite
+  } = useFavorites();
 
   function resetCatalogView() {
     setCategory('all');
@@ -60,7 +31,7 @@ export function Catalog({ onAddToCart }) {
   }
 
   if (showFavoritesOnly) {
-    products = products.filter(product => favorites.includes(product.id));
+    products = products.filter(product => favoritesSet.has(product.id));
   }
 
   if (search.trim()) {
@@ -91,15 +62,8 @@ export function Catalog({ onAddToCart }) {
     products.sort((a, b) => a.name.localeCompare(b.name, 'en'));
   }
 
-  const recommendations = selectedProduct
-    ? PRODUCTS
-      .filter(product => product.category === selectedProduct.category && product.id !== selectedProduct.id)
-      .slice(0, 3)
-    : [];
-
-  const favoriteCount = favorites.length;
   const favoritePreviewProducts = PRODUCTS.slice(0, 3);
-  const isEmptyFavorites = showFavoritesOnly && favoriteCount === 0;
+  const isEmptyFavorites = showFavoritesOnly && favoriteIds.length === 0;
 
   return (
     <main>
@@ -169,8 +133,7 @@ export function Catalog({ onAddToCart }) {
               <ProductCard
                 key={product.id}
                 product={product}
-                isFavorite={favorites.includes(product.id)}
-                onQuickView={setSelectedProduct}
+                isFavorite={favoritesSet.has(product.id)}
                 onToggleFavorite={toggleFavorite}
                 onAddToCart={onAddToCart}
               />
@@ -206,16 +169,6 @@ export function Catalog({ onAddToCart }) {
           )}
         </div>
       </section>
-
-      <ProductQuickView
-        product={selectedProduct}
-        recommendations={recommendations}
-        isFavorite={selectedProduct ? favorites.includes(selectedProduct.id) : false}
-        onClose={() => setSelectedProduct(null)}
-        onSelectProduct={setSelectedProduct}
-        onToggleFavorite={toggleFavorite}
-        onAddToCart={onAddToCart}
-      />
     </main>
   );
 }

@@ -1,46 +1,25 @@
+import { Link } from 'react-router-dom';
 import { formatPrice } from '../utils/format';
 import { HeartIcon } from './HeartIcon';
 
 export function ProductCard({
   product,
   isFavorite = false,
-  onQuickView,
   onToggleFavorite,
   onAddToCart
 }) {
-  const cardCanOpenModal = Boolean(onQuickView);
+  const productPath = `/product/${product.id}`;
 
-  function openQuickView() {
-    if (onQuickView) {
-      onQuickView(product);
-    }
-  }
-
-  function handleCardKeyDown(event) {
-    if (!cardCanOpenModal) {
-      return;
-    }
-
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      openQuickView();
-    }
-  }
-
-  function stopCardClick(event) {
-    event.stopPropagation();
+  function resetScrollPosition() {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
   }
 
   return (
-    <article
-      className={`product-card${cardCanOpenModal ? ' clickable' : ''}`}
-      role={cardCanOpenModal ? 'button' : undefined}
-      tabIndex={cardCanOpenModal ? 0 : undefined}
-      onClick={cardCanOpenModal ? openQuickView : undefined}
-      onKeyDown={handleCardKeyDown}
-    >
+    <article className="product-card">
       <div className="product-image">
-        <img src={product.image} alt={product.name} loading="lazy" referrerPolicy="no-referrer" />
+        <Link className="product-image-link" to={productPath} aria-label={`Open ${product.name}`} onClick={resetScrollPosition}>
+          <img src={product.image} alt={product.name} loading="lazy" referrerPolicy="no-referrer" />
+        </Link>
         {product.badge && <span className="product-badge">{product.badge}</span>}
 
         {onToggleFavorite && (
@@ -48,10 +27,7 @@ export function ProductCard({
             className={`favorite-btn${isFavorite ? ' active' : ''}`}
             type="button"
             aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
-            onClick={event => {
-              stopCardClick(event);
-              onToggleFavorite(product.id);
-            }}
+            onClick={() => onToggleFavorite(product.id)}
           >
             <HeartIcon />
           </button>
@@ -64,22 +40,24 @@ export function ProductCard({
           {product.weight && <span>{product.weight}</span>}
         </div>
 
-        <h3>{product.name}</h3>
+        <h3>
+          <Link className="product-title-link" to={productPath} onClick={resetScrollPosition}>{product.name}</Link>
+        </h3>
         <p>{product.description}</p>
 
         <div className="product-footer">
           <strong>{formatPrice(product.price)}</strong>
           <div className="product-actions">
-            <button
-              className="btn btn-small"
-              type="button"
-              onClick={event => {
-                stopCardClick(event);
-                onAddToCart(product.id);
-              }}
-            >
-              Add
-            </button>
+            <Link className="text-link product-details-link" to={productPath} onClick={resetScrollPosition}>Details</Link>
+            {onAddToCart && (
+              <button
+                className="btn btn-small"
+                type="button"
+                onClick={() => onAddToCart(product.id)}
+              >
+                Add
+              </button>
+            )}
           </div>
         </div>
       </div>
