@@ -15,18 +15,7 @@ const CART_KEY = 'narPatisserieCart';
 function readCartFromStorage() {
   try {
     const savedCart = localStorage.getItem(CART_KEY);
-    const parsedCart = savedCart ? JSON.parse(savedCart) : [];
-
-    if (!Array.isArray(parsedCart)) {
-      return [];
-    }
-
-    return parsedCart
-      .map(item => ({
-        id: Number(item.id),
-        quantity: Number(item.quantity)
-      }))
-      .filter(item => Number.isFinite(item.id) && Number.isFinite(item.quantity) && item.quantity > 0);
+    return savedCart ? JSON.parse(savedCart) : [];
   } catch {
     return [];
   }
