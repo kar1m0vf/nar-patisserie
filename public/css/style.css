@@ -635,15 +635,18 @@ select {
   background: #070506;
 }
 
-.page-hero::before,
 .page-hero::after {
   content: '';
   position: absolute;
   inset: 0;
 }
 
-.page-hero::before {
-  background: var(--page-hero-image) center / cover no-repeat;
+.page-hero-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .page-hero::after {
@@ -655,18 +658,6 @@ select {
 .page-hero .container {
   position: relative;
   z-index: 1;
-}
-
-body[data-page="catalog"] .page-hero {
-  --page-hero-image: url('../images/photos/macarons.jpg');
-}
-
-body[data-page="cart"] .page-hero {
-  --page-hero-image: url('../images/photos/chocolate-cake.jpg');
-}
-
-body[data-page="contacts"] .page-hero {
-  --page-hero-image: url('../images/photos/cappuccino.jpg');
 }
 
 .page-hero .eyebrow {
@@ -1969,7 +1960,7 @@ textarea:focus {
   border-bottom-color: rgba(255, 255, 255, 0.08);
 }
 
-.page-hero::before {
+.page-hero-image {
   filter: saturate(1.08) contrast(1.06);
 }
 
