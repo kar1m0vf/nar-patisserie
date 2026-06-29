@@ -21,13 +21,17 @@ function readCartFromStorage() {
   }
 }
 
+function findProductById(productId) {
+  return PRODUCTS.find(product => product.id === productId);
+}
+
 export function App() {
-  const [cart, setCart] = useState(readCartFromStorage);
+  const [cartItems, setCartItems] = useState(readCartFromStorage);
   const [toastText, setToastText] = useState('');
 
   useEffect(() => {
-    localStorage.setItem(CART_KEY, JSON.stringify(cart));
-  }, [cart]);
+    localStorage.setItem(CART_KEY, JSON.stringify(cartItems));
+  }, [cartItems]);
 
   useEffect(() => {
     if (!toastText) {
@@ -41,70 +45,52 @@ export function App() {
     return () => window.clearTimeout(timerId);
   }, [toastText]);
 
-  const detailedCart = cart
-    .map(item => ({
-      ...item,
-      product: PRODUCTS.find(product => product.id === item.id)
+  const detailedCart = cartItems
+    .map(cartItem => ({
+      ...cartItem,
+      product: findProductById(cartItem.id)
     }))
-    .filter(item => item.product);
+    .filter(cartItem => cartItem.product);
 
-  const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-  const totalPrice = detailedCart.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+  const totalCount = detailedCart.reduce((sum, cartItem) => sum + cartItem.quantity, 0);
+  const totalPrice = detailedCart.reduce((sum, cartItem) => sum + cartItem.product.price * cartItem.quantity, 0);
 
   function addToCart(productId, quantity = 1) {
-    const id = Number(productId);
-    const amount = Math.max(1, Number(quantity) || 1);
+    setCartItems(currentItems => {
+      const itemInCart = currentItems.find(item => item.id === productId);
 
-    if (!PRODUCTS.some(product => product.id === id)) {
-      return;
-    }
-
-    setCart(currentCart => {
-      const existingItem = currentCart.find(item => item.id === id);
-
-      if (existingItem) {
-        return currentCart.map(item => (
-          item.id === id
-            ? { ...item, quantity: item.quantity + amount }
+      if (itemInCart) {
+        return currentItems.map(item => (
+          item.id === productId
+            ? { ...item, quantity: item.quantity + quantity }
             : item
         ));
       }
 
-      return [...currentCart, { id, quantity: amount }];
+      return [...currentItems, { id: productId, quantity }];
     });
 
     setToastText('Added to cart');
   }
 
   function changeCartQuantity(productId, action) {
-    const id = Number(productId);
+    const step = action === 'increase' ? 1 : -1;
 
-    setCart(currentCart => currentCart
-      .map(item => {
-        if (item.id !== id) {
-          return item;
-        }
-
-        if (action === 'increase') {
-          return { ...item, quantity: item.quantity + 1 };
-        }
-
-        if (action === 'decrease') {
-          return { ...item, quantity: item.quantity - 1 };
-        }
-
-        return item;
-      })
+    setCartItems(currentItems => currentItems
+      .map(item => (
+        item.id === productId
+          ? { ...item, quantity: item.quantity + step }
+          : item
+      ))
       .filter(item => item.quantity > 0));
   }
 
   function removeFromCart(productId) {
-    const id = Number(productId);
-    setCart(currentCart => currentCart.filter(item => item.id !== id));
+    setCartItems(currentItems => currentItems.filter(item => item.id !== productId));
   }
 
   function clearCart() {
-    setCart([]);
+    setCartItems([]);
   }
 
   return (

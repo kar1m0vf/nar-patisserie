@@ -33,7 +33,7 @@ export function ScrollTop() {
       aria-hidden={!isVisible}
       onClick={handleClick}
     >
-      &uarr;
+      <span aria-hidden="true">&uarr;</span>
     </button>
   );
 }
